@@ -1,0 +1,55 @@
+resource_types:
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+    tag: latest
+resources:
+- name: tasks-git
+  type: git
+  source:
+    uri: https://github.com/kdvolder/deploy-start-spring-io.git
+- name: weekly
+  type: time
+  check_every: 24h
+  source:
+    interval: 160h
+- name: start-git
+  type: git
+  source:
+    uri: https://github.com/spring-io/start.spring.io.git
+- name: cf
+  type: cf
+  source:
+    api: ((cf_api_url))
+    organization: FrameworksAndRuntimes
+    space: sts-development
+    username: ((cf_user))
+    password: ((cf_password))
+- name: slack-notification
+  type: slack-notification
+  source:
+    url: ((slack_webhook))
+jobs:
+- name: build-and-push
+  on_failure:
+    put: slack-notification
+    params:
+      text: |
+        Concourse ${BUILD_PIPELINE_NAME}/${BUILD_JOB_NAME}/${BUILD_NAME} has failed!
+
+  plan:
+  - in_parallel:
+    - get: weekly
+      trigger: true
+    - get: start-git
+      trigger: true
+    - get: tasks-git
+  - task: build
+    file: tasks-git/tasks/build.yml
+  - put: cf
+    params:
+      manifest: tasks-git/manifest.yml
+      path: output/start-site-exec.jar
+      show_app_log: true
+
