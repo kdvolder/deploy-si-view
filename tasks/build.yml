@@ -5,7 +5,7 @@ image_resource:
     repository: openjdk
     tag: 8-jdk
 inputs:
-- name: start-git
+- name: source-git
 - name: tasks-git
 outputs:
 - name: output
