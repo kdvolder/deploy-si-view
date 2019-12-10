@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
 workdir=$(pwd)
-cd $workdir/start-git
+cd $workdir/source-git
 ./mvnw -Dmaven.test.skip=true clean install
-cp start-site/target/start-site-exec.jar $workdir/output
+cp start-site/target/sprotty-si-view-*-exec.jar $workdir/output/app.jar

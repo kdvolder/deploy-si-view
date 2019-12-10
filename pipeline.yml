@@ -8,16 +8,17 @@ resources:
 - name: tasks-git
   type: git
   source:
-    uri: https://github.com/kdvolder/deploy-start-spring-io.git
+    uri: https://github.com/kdvolder/deploy-si-view.git
 - name: weekly
   type: time
   check_every: 24h
   source:
     interval: 160h
-- name: start-git
+- name: source-git
   type: git
   source:
-    uri: https://github.com/spring-io/start.spring.io.git
+    uri: git@github.com:pivotal/si-view.git
+    private_key: ((rsa_id))
 - name: cf
   type: cf
   source:
@@ -42,7 +43,7 @@ jobs:
   - in_parallel:
     - get: weekly
       trigger: true
-    - get: start-git
+    - get: source-git
       trigger: true
     - get: tasks-git
   - task: build
@@ -50,6 +51,6 @@ jobs:
   - put: cf
     params:
       manifest: tasks-git/manifest.yml
-      path: output/start-site-exec.jar
+      path: output/app.jar
       show_app_log: true
 
