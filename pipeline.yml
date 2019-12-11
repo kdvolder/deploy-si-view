@@ -46,6 +46,7 @@ jobs:
     - get: source-git
       trigger: true
     - get: tasks-git
+      trigger: true
   - task: build
     file: tasks-git/tasks/build.yml
   - put: cf
