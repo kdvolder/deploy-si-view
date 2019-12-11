@@ -1,3 +1,5 @@
 applications:
 - name: si-view
+  memory: 4g
   buildpack: java_buildpack
+  
